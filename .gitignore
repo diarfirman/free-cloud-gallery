@@ -8,6 +8,7 @@
 wrangler.toml
 cors.json
 public/config.js
+README.id.md
 
 # Dependencies
 node_modules/
