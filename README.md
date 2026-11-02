@@ -2,6 +2,9 @@
 
 Architecture documentation, technical specifications, and operational guide for a serverless private media gallery running 100% on Cloudflare Free Tier ($0/month operating cost).
 
+> **Looking to deploy your own gallery from scratch?**  
+> Read the complete zero-to-production tutorial: **[Step-by-Step Deployment Guide (DEPLOYMENT.md)](DEPLOYMENT.md)**.
+
 ---
 
 ## 1. Project Overview
@@ -279,6 +282,8 @@ The interface is built with a minimalist, clean, and content-first philosophy.
 ---
 
 ## 9. Deployment & Operations
+
+For a complete step-by-step tutorial from account creation to production, read **[DEPLOYMENT.md](DEPLOYMENT.md)**.
 
 ### 9.1. Prerequisites
 - Node.js version 18+.
