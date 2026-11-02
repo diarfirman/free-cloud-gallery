@@ -86,8 +86,7 @@ Allows browser-based direct PUT uploads to `gallery-photos`:
       "allowed": {
         "origins": [
           "https://your-gallery.pages.dev",
-          "https://gallery.yourdomain.com",
-          "*"
+          "https://gallery.yourdomain.com"
         ],
         "methods": [
           "GET",

@@ -96,7 +96,7 @@ Copy `cors.example.json` to `cors.json`:
 cp cors.example.json cors.json
 ```
 
-Edit `cors.json` and ensure your frontend domain (or `*`) is listed under `origins`:
+Edit `cors.json` and ensure your frontend domain is listed under `origins`:
 ```json
 {
   "rules": [
@@ -104,8 +104,7 @@ Edit `cors.json` and ensure your frontend domain (or `*`) is listed under `origi
       "allowed": {
         "origins": [
           "https://gallery.yourdomain.com",
-          "https://*.pages.dev",
-          "*"
+          "https://*.pages.dev"
         ],
         "methods": ["GET", "PUT", "HEAD"],
         "headers": ["*"]

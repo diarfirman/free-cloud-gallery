@@ -352,6 +352,7 @@ function initEventListeners() {
   lightboxDownload.addEventListener("click", handleDownloadCurrentPhoto);
   lightboxDelete.addEventListener("click", handleDeleteCurrentPhoto);
   initLightboxZoomEvents();
+  initLightboxSwipeEvents();
   initInfiniteScroll();
 
   // Edit modal navigation
@@ -1679,6 +1680,52 @@ function initLightboxZoomEvents() {
   lightboxImg.addEventListener("touchend", () => {
     isPanning = false;
   });
+}
+
+// 5. Mobile Touch Swipe Navigation (Swipe left/right to browse media)
+function initLightboxSwipeEvents() {
+  if (!lightboxModal) return;
+
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  let swipeStartTime = 0;
+
+  lightboxModal.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 1 && zoomScale <= 1) {
+      swipeStartX = e.touches[0].clientX;
+      swipeStartY = e.touches[0].clientY;
+      swipeStartTime = Date.now();
+    }
+  }, { passive: true });
+
+  lightboxModal.addEventListener("touchend", (e) => {
+    if (zoomScale > 1 || !swipeStartX) return;
+
+    if (e.target.closest("button, a, input, select, textarea, .lightbox-footer")) {
+      swipeStartX = 0;
+      swipeStartY = 0;
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - swipeStartX;
+    const deltaY = touch.clientY - swipeStartY;
+    const elapsedTime = Date.now() - swipeStartTime;
+
+    // Trigger only on distinct horizontal swipe gestures
+    if (elapsedTime < 500 && Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+      if (deltaX < 0) {
+        showNextPhoto();
+      } else {
+        showPrevPhoto();
+      }
+    }
+
+    swipeStartX = 0;
+    swipeStartY = 0;
+  }, { passive: true });
 }
 
 window.openLightbox = function(index) {
