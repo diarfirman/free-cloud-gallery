@@ -1,0 +1,18 @@
+# Cloudflare Wrangler cache & state
+.wrangler/
+.dev.vars
+.env
+.env.*
+
+# Private configuration containing specific credentials / domains
+wrangler.toml
+cors.json
+public/config.js
+
+# Dependencies
+node_modules/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+*.log

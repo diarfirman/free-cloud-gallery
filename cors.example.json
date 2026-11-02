@@ -1,0 +1,25 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://your-gallery.pages.dev",
+          "https://gallery.yourdomain.com",
+          "*"
+        ],
+        "methods": [
+          "GET",
+          "PUT",
+          "HEAD"
+        ],
+        "headers": [
+          "*"
+        ]
+      },
+      "exposeHeaders": [
+        "ETag"
+      ],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Cloud Gallery</title>
+  <link rel="stylesheet" href="styles.css?v=20261101_18">
+</head>
+<body>
+  <!-- Lock Screen Modal/Card -->
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-card">
+      <h2>Restricted Access</h2>
+      <p>Enter your access key to continue.</p>
+      <form id="lockForm">
+        <div class="input-password-wrapper">
+          <input type="password" id="lockKeyInput" placeholder="Access Key / PIN" required autofocus>
+          <button type="button" id="toggleLockKeyVisibility" class="btn-toggle-password" title="Show or hide access key">Show</button>
+        </div>
+        <button type="submit" id="lockSubmitBtn" class="btn-primary">
+          <span id="lockSubmitText">Unlock</span>
+        </button>
+        <div id="lockErrorMsg" class="status-msg error"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="mainApp" class="main-app hidden">
+    <header>
+      <div class="header-container">
+        <div class="header-content">
+          <h1>Free Cloud Gallery</h1>
+        </div>
+        <div class="header-actions">
+          <span id="userRoleBadge" class="badge badge-role">Loading...</span>
+          <button type="button" id="themeToggleBtn" class="btn-theme" title="Toggle Theme">
+            <span id="themeIcon">Dark Mode</span>
+          </button>
+          <button type="button" id="logoutBtn" class="btn-secondary btn-sm" title="Lock gallery">
+            Lock
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+    <!-- Floating Action Button (FAB) Upload - Admin Only -->
+    <button type="button" id="uploadFabBtn" class="fab-btn hidden" title="Upload Photos or Videos">
+      <span class="fab-icon">+</span>
+      <span class="fab-text">Upload</span>
+    </button>
+
+    <!-- Upload Modal / Mobile Bottom Sheet -->
+    <div id="uploadModal" class="upload-modal hidden" role="dialog" aria-modal="true">
+      <div id="uploadModalOverlay" class="upload-modal-overlay"></div>
+      <div class="upload-modal-card">
+        <div class="upload-modal-header">
+          <h3>Upload Photos &amp; Videos</h3>
+          <button type="button" id="closeUploadModalBtn" class="upload-modal-close" title="Close">&times;</button>
+        </div>
+
+        <form id="uploadForm">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="albumSelect">Category / Album</label>
+              <div class="album-picker-wrapper">
+                <select id="albumSelect" class="form-select">
+                  <option value="General">General</option>
+                  <option value="__new__">+ Create New Album...</option>
+                </select>
+                <input type="text" id="newAlbumInput" class="hidden" placeholder="Enter new album name...">
+              </div>
+            </div>
+            <div class="form-group flex-2">
+              <label for="photoTitle">Title (optional)</label>
+              <input type="text" id="photoTitle" placeholder="Leave blank to use filename">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Select Photos or Videos</label>
+            <div id="dropZone" class="drop-zone">
+              <div class="drop-zone-prompt">
+                <p>
+                  <span class="desktop-only-text">Drag &amp; drop files here, or </span>
+                  <span class="btn-picker-highlight">Browse Files</span>
+                </p>
+                <span class="file-hint">Max 15MB for photos, 85MB for videos</span>
+              </div>
+              <input type="file" id="photoFile" accept="image/*,video/*" class="file-input" multiple required>
+            </div>
+
+            <!-- Multi-file Queue Preview container -->
+            <div id="fileQueueContainer" class="queue-container hidden">
+              <div class="queue-header">
+                <span id="queueSummary">0 files selected</span>
+                <button type="button" id="clearQueueBtn" class="btn-text-danger">Clear All</button>
+              </div>
+              <div id="queueList" class="queue-list"></div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div id="uploadProgressWrapper" class="progress-wrapper hidden">
+            <div class="progress-bar">
+              <div id="uploadProgressFill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="progressText" class="progress-text">Uploading...</span>
+          </div>
+
+          <div class="upload-modal-actions">
+            <button type="button" id="cancelUploadModalBtn" class="btn-secondary">Cancel</button>
+            <button type="submit" id="uploadBtn" class="btn-primary">
+              <span id="uploadBtnText">Start Upload</span>
+            </button>
+          </div>
+        </form>
+        <div id="statusMessage" class="status-msg"></div>
+      </div>
+    </div>
+
+    <!-- Section Gallery Grid -->
+    <section class="gallery-section">
+      <div class="gallery-header">
+        <div class="gallery-title-wrapper">
+          <h2>Collection</h2>
+          <span id="photoCountBadge" class="badge">0 Items</span>
+          <button type="button" id="selectModeBtn" class="btn-secondary btn-xs hidden" title="Select multiple media">Select</button>
+        </div>
+        <div id="storageSummaryText" class="storage-inline-text">
+          Loading storage...
+        </div>
+      </div>
+
+      <!-- Filter Album & Sorting Bar (Sejajar Kiri & Kanan) -->
+      <div class="filter-sort-bar">
+        <div id="albumTabs" class="album-tabs">
+          <button type="button" class="album-tab active" data-album="all">All</button>
+        </div>
+        <div class="sort-wrapper">
+          <select id="sortSelect" class="form-select sort-select" title="Sort media">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title_asc">Title (A-Z)</option>
+            <option value="title_desc">Title (Z-A)</option>
+            <option value="size_desc">File Size</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="galleryGrid" class="gallery-container"></div>
+
+      <div class="pagination-wrapper">
+        <div id="infiniteScrollSentinel" class="infinite-scroll-sentinel"></div>
+        <div id="infiniteScrollLoader" class="infinite-scroll-loader hidden">
+          <span>Loading more items...</span>
+        </div>
+        <button type="button" id="loadMoreBtn" class="btn-secondary hidden">Load More</button>
+      </div>
+
+      <!-- Floating Batch Action Bar (Multi-Select Mode) -->
+      <div id="batchActionBar" class="batch-action-bar hidden">
+        <div class="batch-bar-container">
+          <span id="batchCountText" class="batch-count-text">0 selected</span>
+          <div class="batch-bar-actions">
+            <button type="button" id="batchSelectAllBtn" class="btn-text">Select All</button>
+            <button type="button" id="batchDownloadBtn" class="btn-secondary btn-sm" disabled>Download</button>
+            <button type="button" id="batchDeleteBtn" class="btn-danger btn-sm" disabled>Delete</button>
+            <button type="button" id="batchCancelBtn" class="btn-secondary btn-sm">Done</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" class="lightbox-modal hidden" role="dialog" aria-modal="true">
+    <div class="lightbox-overlay"></div>
+    <div class="lightbox-content">
+      <button type="button" id="lightboxClose" class="lightbox-close" title="Close (Esc)">&times;</button>
+      
+      <button type="button" id="lightboxPrev" class="lightbox-nav prev" title="Previous (&larr;)">&#10094;</button>
+      <button type="button" id="lightboxNext" class="lightbox-nav next" title="Next (&rarr;)">&#10095;</button>
+
+      <div class="lightbox-image-wrapper">
+        <img id="lightboxImg" src="" alt="Full size preview" crossorigin="anonymous">
+        <video id="lightboxVideo" controls playsinline preload="metadata" class="lightbox-video hidden"></video>
+      </div>
+
+      <div class="lightbox-footer">
+        <div class="lightbox-meta">
+          <div class="lightbox-meta-top">
+            <h3 id="lightboxTitle"></h3>
+            <span id="lightboxAlbum" class="badge"></span>
+          </div>
+          <p id="lightboxDetails"></p>
+        </div>
+        <div class="lightbox-actions">
+          <button type="button" id="lightboxFullscreenBtn" class="btn-secondary" title="Fullscreen (F)">Fullscreen</button>
+          <button type="button" id="lightboxEditBtn" class="btn-secondary" title="Edit title, album, or date">Edit</button>
+          <a id="lightboxDownload" href="#" download class="btn-secondary" title="Download original media">Download</a>
+          <button type="button" id="lightboxDelete" class="btn-danger" title="Delete media">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Photo Modal -->
+  <div id="editModal" class="lightbox-modal hidden" role="dialog" aria-modal="true">
+    <div class="lightbox-overlay"></div>
+    <div class="edit-modal-card">
+      <div class="section-header">
+        <h2>Edit Media Information</h2>
+        <button type="button" id="editModalClose" class="btn-text">Close</button>
+      </div>
+      <form id="editPhotoForm">
+        <div class="form-group">
+          <label for="editPhotoTitle">Title</label>
+          <input type="text" id="editPhotoTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="editPhotoAlbum">Category / Album</label>
+          <input type="text" id="editPhotoAlbum" list="editAlbumDatalist" required>
+          <datalist id="editAlbumDatalist"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="editPhotoDate">Date (Capture / Modified Date)</label>
+          <input type="datetime-local" id="editPhotoDate" step="1">
+          <span class="file-hint">Select date and time using picker</span>
+        </div>
+        <div class="edit-modal-actions">
+          <button type="button" id="editModalCancelBtn" class="btn-secondary">Cancel</button>
+          <button type="submit" id="editModalSaveBtn" class="btn-primary">
+            <span id="editModalSaveText">Save Changes</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js?v=20261101_18"></script>
+</body>
+</html>

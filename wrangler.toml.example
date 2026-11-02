@@ -1,0 +1,26 @@
+name = "gallery-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# Route binding (optional: use custom domain, or omit to deploy on workers.dev)
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gallery-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "PHOTOS_BUCKET"
+bucket_name = "gallery-photos"
+
+[vars]
+# Custom domain pointing to your R2 bucket for zero-worker egress
+MEDIA_BASE_URL = "https://media.yourdomain.com"
+# Guest passcode for read-only access (default fallback)
+VIEW_SECRET = "guestpasscode"
+# Cloudflare S3 API credentials for direct-to-R2 uploads
+R2_ACCESS_KEY_ID = "YOUR_R2_ACCESS_KEY_ID"
+R2_ACCOUNT_ID = "YOUR_CLOUDFLARE_ACCOUNT_ID"
